@@ -20,6 +20,7 @@ import (
 	. "github.com/ahmetb/go-linq"
 	. "github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
+	"regexp"
 	"strings"
 )
 
@@ -49,11 +50,16 @@ func (cmd listCmd) run() error {
 		fmt.Printf("|__%s\n", Yellow(v.(Group).Key))
 		for _, b := range v.(Group).Group {
 			fmt.Printf("   |  %s\n", Bold(b.(RmbrNote).Command))
-			fmt.Printf("   |  Description: \t%s\n", b.(RmbrNote).Description)
+			fmt.Printf("   |  Description: \t%s\n", format(b.(RmbrNote).Description))
 			fmt.Printf("   |--\n")
 		}
 	}
 	return nil
+}
+
+func format(s string) string {
+	re := regexp.MustCompile(`\r?\n`)
+	return re.ReplaceAllString(s, "\n   |        \t\t")
 }
 
 func ListCommand(m *RmbrNotesManager) *cobra.Command {
@@ -64,7 +70,7 @@ func ListCommand(m *RmbrNotesManager) *cobra.Command {
 	// cmd represents the create command
 	var cmd = &cobra.Command{
 		Use:   "list",
-		Short: "creates a new note to remember",
+		Short: "lists all notes",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			m.Logger.Debug("create", strings.Join(args, ","))

@@ -36,7 +36,9 @@ var rootCmd = &cobra.Command{
   Long: `rmbr is a tool for keeping and managing commands to remember`,
   // Uncomment the following line if your bare application
   // has an action associated with it:
-  //	Run: func(cmd *cobra.Command, args []string) { },
+  Run: func(cmd *cobra.Command, args []string) {
+
+  },
 }
 
 func GetRootCommand() *cobra.Command {

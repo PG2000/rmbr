@@ -5,26 +5,23 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 PATH_BUILD=build/
-FILE_COMMAND=rmbr
-FILE_ARCH=darwin_amd64
+BINARY_NAME=rmbr
+BINARY_NAME_LINUX=rmbr_unix
 
 clean:
 	@rm -rf ./build
 
-builds: clean
-	$(GOCMD) \
-	  -bc="darwin,amd64" \
-	  -pv=$(VERSION) \
-	  -d=$(PATH_BUILD) \
-	  -build-ldflags "-X main.VERSION=$(VERSION)"
-
-
 build: clean
-	$(GOBUILD) -o $(PATH_BUILD)$(FILE_COMMAND) -v
+	$(GOBUILD) -o $(PATH_BUILD)$(BINARY_NAME) -v
 
 version:
 	@echo $(VERSION)
 
 install:
 	install -d -m 755 '$(HOME)/bin/'
-	install $(PATH_BUILD)$(FILE_COMMAND) '$(HOME)/bin/$(FILE_COMMAND)'
+	install $(PATH_BUILD)$(BINARY_NAME) '$(HOME)/bin/$(BINARY_NAME)'
+
+build-linux: clean
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(PATH_BUILD)$(BINARY_NAME_LINUX) -v
+
+build-all: clean build build-linux
